@@ -17,7 +17,7 @@ A machine learning-powered handwriting analysis tool that helps understand and i
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Flask (Python)
 - **Machine Learning**: TensorFlow/Keras
-- **Image Processing**: PIL (Python Imaging Library)
+- **Image Processing**: Sci-kit learn
 
 ## 🛠️ Installation
 
@@ -62,7 +62,7 @@ The-Analyser/
 ├── templates/
 │   └── index_.html
 ├── uploads/
-├── model.pkl
+├── model.keras
 ├── app.py
 └── README.md
 ```
