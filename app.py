@@ -67,7 +67,7 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 # Load the model
-with open('model.pkl', 'rb') as file:
+with open('model1.keras', 'rb') as file:
     model = pickle.load(file)
 
 @app.route('/', methods=['GET', 'POST'])
