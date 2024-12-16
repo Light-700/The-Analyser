@@ -51,13 +51,9 @@
 
 from flask import Flask, request, render_template, jsonify
 import os
-import pickle
-from PIL import Image
 import numpy as np
-
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import img_to_array
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
+from PIL import Image
+import tensorflow as tf
 
 app = Flask(__name__)
 
@@ -66,9 +62,19 @@ UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# Load the model
-with open('model1.keras', 'rb') as file:
-    model = pickle.load(file)
+# Load the Keras model
+model = tf.keras.models.load_model('model1.keras')
+
+def preprocess_image(image_path):
+    # Image preprocessing similar to training
+    image = Image.open(image_path)
+    image = image.resize((28, 28))  # Match training dimensions
+    image = image.convert('L')  # Convert to grayscale
+    image = np.array(image)
+    image = image.reshape(1, 28, 28, 1)
+    image = image.astype('float32')
+    image = image / 255.0  # Normalize pixel values
+    return image
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -81,25 +87,24 @@ def upload_file():
             return jsonify({'error': 'No selected file'}), 400
 
         if file:
-            # Save and process image
+            # Save the uploaded image
             filepath = os.path.join(UPLOAD_FOLDER, file.filename)
             file.save(filepath)
             
-            # Preprocess image for keras model
-            image = Image.open(filepath)
-            image = image.resize((224, 224))
-            image = img_to_array(image)
-            image = np.expand_dims(image, axis=0)
-            image = preprocess_input(image)
+            # Preprocess image
+            processed_image = preprocess_image(filepath)
             
             # Make prediction
-            preds = model.predict(image)
-            results = decode_predictions(preds, top=1)[0]
-            prediction = results[0][1]
+            prediction = model.predict(processed_image)
+            predicted_class = np.argmax(prediction)
+
+            # Map prediction to character (assuming you have a label mapping)
+            label_dict = {0: 'A', 1: 'B', 2: 'C'} # Add your complete mapping
+            result = label_dict[predicted_class]
             
-            return render_template('index_.html', prediction=prediction)
+            return render_template('index.html', prediction=prediction)
     
-    return render_template('index_.html')
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

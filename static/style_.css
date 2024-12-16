@@ -1,0 +1,10 @@
+body {
+    padding: 20px;
+    background-color: var(--bg);
+    color: white;
+}
+
+.form-control {
+    max-width: 500px;
+    margin: 0 auto;
+}
