@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        File Dropzone
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans&display=swap" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> -->
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        :root {
+            --primary: #75FAC1;
+            --primary-hover: #35d690;
+            --bg: #373443;
+            --secondary: #262626;
+            --secondary-hover: #383838;
+            --dropzone-bg: #2b2b2e;
+            --gray: #D3D3D3;
+            --border: #333333;
+            --dropzone-border: #FFF;
+            --headline: #FFF;
+            --text: #FFF;
+            --primary-text: #F2F7FE;
+            --dropzone-over: var(--secondary);
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 1rem;
+            color: var(--text);
+        }
+
+        *::selection {
+            background: var(--primary);
+            color: var(--secondary);
+        }
+
+        .dropzone-box {
+            border-radius: 1rem;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            max-width: 36rem;
+            border: 1px solid var(--border);
+            width: 100%;
+            background: var(--dropzone-bg);
+        }
+
+        .dropzone-box h2 {
+            font-size: 1.4rem;
+            margin-bottom: 0.6rem;
+            color: var(--headline);
+        }
+
+        .dropzone-box p {
+            font-size: 1.15rem;
+            color: var(--gray);
+        }
+
+        .dropzone-area {
+            padding: 1rem;
+            position: relative;
+            margin-top: 1.5rem;
+            min-height: 16rem;
+            display: flex;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border: 2px dashed var(--dropzone-border);
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dropzone-area .file-info {
+            font-size: 1.1rem;
+        }
+
+        .dropzone-area [type="file"] {
+            cursor: pointer;
+            position: absolute;
+            opacity: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .dropzone-area .file-upload-icon svg {
+            height: 6rem;
+            max-width: 6rem;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            stroke: var(--headline);
+        }
+
+        .dropzone-area:hover {
+            background: var(--dropzone-over);
+        }
+
+        .dropzone--over {
+            border: 2px solid var(--primary);
+            background: var(--dropzone-over);
+        }
+
+        .dropzone-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .dropzone-actions button {
+            flex-grow: 1;
+            min-height: 3rem;
+            font-size: 1.2rem;
+            color: var(--text);
+            border: none;
+            transition: background 0.3s ease;
+        }
+
+
+        .dropzone-actions button[type='reset'] {
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--secondary);
+            cursor: pointer;
+            border: 1px solid var(--border);
+            font-weight: bold;
+        }
+
+        .dropzone-actions button[type='reset']:hover {
+            background: var(--secondary-hover);
+        }
+
+        .dropzone-actions button[type='submit'] {
+            background: var(--primary);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            color: var(--secondary);
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropzone-actions button[type='submit']:hover {
+            background: var(--primary-hover);
+        }
+    </style>
+</head>
+
+<body>
+    <form class="dropzone-box">
+        <h2>Upload and attach files</h2>
+        <p>Click to upload or drag and drop</p>
+        <div class="dropzone-area">
+            <div class="file-upload-icon">
+                <!-- svg icon -->
+            </div>
+            <input type="file" required id="upload-file" name="uploaded-file">
+            <p class="file-info">No Files Selected</p>
+        </div>
+        <div class="dropzone-actions">
+            <button type="reset">
+                Cancel
+            </button>
+            <button id="submit-button" type="submit">
+                Save
+            </button>
+        </div>
+    </form>
+
+    <!-- <script src="{{ url_for('static', filename='script.js') }}"></script> -->
+    <script>
+        const dropzoneBox = document.getElementsByClassName("dropzone-box")[0];
+
+        const inputFiles = document.querySelectorAll(
+            ".dropzone-area input[type='file']"
+        );
+
+        const inputElement = inputFiles[0];
+
+        const dropZoneElement = inputElement.closest(".dropzone-area");
+
+        inputElement.addEventListener("change", (e) => {
+            if (inputElement.files.length) {
+                updateDropzoneFileList(dropZoneElement, inputElement.files[0]);
+            }
+        });
+
+        dropZoneElement.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZoneElement.classList.add("dropzone--over");
+        });
+
+        ["dragleave", "dragend"].forEach((type) => {
+            dropZoneElement.addEventListener(type, (e) => {
+                dropZoneElement.classList.remove("dropzone--over");
+            });
+        });
+
+        dropZoneElement.addEventListener("drop", (e) => {
+            e.preventDefault();
+
+            if (e.dataTransfer.files.length) {
+                inputElement.files = e.dataTransfer.files;
+
+                updateDropzoneFileList(dropZoneElement, e.dataTransfer.files[0]);
+            }
+
+            dropZoneElement.classList.remove("dropzone--over");
+        });
+
+        const updateDropzoneFileList = (dropzoneElement, file) => {
+            let dropzoneFileMessage = dropzoneElement.querySelector(".file-info");
+
+            dropzoneFileMessage.innerHTML = `
+        ${file.name}, ${file.size} bytes
+    `;
+        };
+
+        dropzoneBox.addEventListener("reset", (e) => {
+            let dropzoneFileMessage = dropZoneElement.querySelector(".file-info");
+
+            dropzoneFileMessage.innerHTML = `No Files Selected`;
+        });
+
+        dropzoneBox.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const file = document.getElementById("upload-file").files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('https://the-analyser.onrender.com/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                console.log(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>
