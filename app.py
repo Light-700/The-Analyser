@@ -52,6 +52,7 @@
 from flask import Flask, request, render_template, jsonify
 import os
 import numpy as np
+import pandas as pd
 from PIL import Image
 import tensorflow as tf
 
@@ -64,6 +65,17 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 # Load the Keras model
 model = tf.keras.models.load_model('model1.keras')
+label_map = pd.read_csv("/THE-ANALYSER/input/emnist-balanced-mapping.txt", 
+                        delimiter = ' ', 
+                        index_col=0, 
+                        header=None, 
+                        )
+label_m = label_map.squeeze()
+ # Map prediction to character (assuming you have a label mapping)
+label_dict={}
+for i,labels in enumerate(label_m):
+    label_dict[i] = chr(labels)
+label_dict
 
 def preprocess_image(image_path):
     # Image preprocessing similar to training
@@ -98,8 +110,7 @@ def upload_file():
             prediction = model.predict(processed_image)
             predicted_class = np.argmax(prediction)
 
-            # Map prediction to character (assuming you have a label mapping)
-            label_dict = {0: 'A', 1: 'B', 2: 'C'} # Add your complete mapping
+            
             result = label_dict[predicted_class]
             
             return render_template('index.html', prediction=prediction)
