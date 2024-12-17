@@ -65,10 +65,10 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 # Load the Keras model
 model = tf.keras.models.load_model('model1.keras')
-label_map = pd.read_csv("/THE-ANALYSER/input/emnist-balanced-mapping.txt", 
+label_map = pd.read_csv("/The-Analyser/input/emnist-balanced-mapping.txt", 
                         delimiter = ' ', 
                         index_col=0, 
-                        header=None, 
+                        header=None,
                         )
 label_m = label_map.squeeze()
  # Map prediction to character (assuming you have a label mapping)
