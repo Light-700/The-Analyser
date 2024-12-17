@@ -175,8 +175,8 @@
             <div class="file-upload-icon">
                 <!-- svg icon -->
             </div>
-            <input type="file" required id="upload-file" name="imagefile" accept="image/*>
-            <p class=" file-info">No Files Selected</p>
+            <input class="form-control" type="file" name="imagefile" accept="image/*" >
+            <p class="file-info">No Files Selected</p>
         </div>
         <div class="dropzone-actions">
             <button type="reset">Cancel</button>
@@ -245,7 +245,7 @@
         });
 
         dropzoneBox.addEventListener("submit", async (e) => {
-            e.preventDefault();
+            // e.preventDefault();
             const file = document.getElementById("upload-file").files[0];
             const formData = new FormData();
             formData.append('imagefile', file);
